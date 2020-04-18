@@ -6,6 +6,7 @@ import random
 import pyfiglet
 import requests
 import xml.etree.ElementTree as ET
+import re
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -30,12 +31,12 @@ ballcontent = [
 
 client = discord.Client()
 
-# @client.event
-# async def on_ready():
-#     # print(f'{client.user} has connected to Discord!')
-#     print("haha cum")
 def randomlistitem(listname):
     return listname[random.randint(0, len(listname) - 1 )]
+
+def stripprefix(text, prefix): # it looks better ok
+    return text.split(prefix, 1)[1]
+
 
 @client.event
 async def on_ready():
@@ -54,7 +55,9 @@ async def on_message(message):
         await message.channel.send(text)
 
     if "big" in message.content:
-        text = message.content.split("big", 1)[1]
+        text = stripprefix(message.content, "big")
+        if text[0] == " ":
+            text = stripprefix(text, " ")
         bigtext = pyfiglet.figlet_format(text)
         await message.channel.send("```\n" + bigtext + "\n```")
 
@@ -66,7 +69,7 @@ async def on_message(message):
             await message.channel.send("ok now check the iv or ban")
 
     if message.content.startswith("gelbooru "):
-        text = message.content.split("gelbooru ", 1)[1]
+        text = stripprefix(message.content, "gelbooru ")
         text = text.replace(" ", "+")
         GELBOORU_API = os.getenv('GELBOORU_API')
         text = "https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=100" + GELBOORU_API + "&tags=" + text
@@ -79,5 +82,44 @@ async def on_message(message):
         text = randomlistitem(imgurl)
         await message.channel.send(text)
 
+    if message.content.startswith("roll "):
+        text = stripprefix(message.content, "roll ")
+        if "d" in text: # standard dice notation with basic arithmetic
+            splittext = re.split("([-+*/])", text)
+            result = splittext[:] # copies value
+            for diceroll in splittext[::2]: # even indices
+                if not "d" in diceroll: # the notation is wrong somehow
+                    await message.channel.send("good job dumbass you messed up the notation")
+                    return 0
+                dicecalc = diceroll.split("d")
+                subresult = 0
+                if dicecalc[0] == "":
+                    dicecalc[0] = 1
+                for i in range(0, int(dicecalc[0])):
+                    subresult += random.randint(1, int(dicecalc[1]))
+                for index, value in enumerate(result):
+                    if value == diceroll:
+                        result[index] = str(subresult)
+            finalresult = eval("".join(result))
+            await message.channel.send(":game_die: **" + str(finalresult) + "**")
+
+        if "%" in text:
+            splittext = re.split("([-+*/])", text)
+            result = splittext[:]  # copies value
+            for percentage in splittext[::2]:  # even indices
+                if not "%" in percentage:  # the notation is wrong somehow
+                    await message.channel.send("good job dumbass you messed up the notation")
+                    return 0
+                fraction = percentage.replace("%", "")
+                fraction = str(round(float(fraction)) / 100)
+                for index, value in enumerate(result):
+                    if value == percentage:
+                        result[index] = str(fraction)
+            finalresult = int(eval("".join(result)) * 100)
+            if random.randint(1,100) <= finalresult:
+                rngbool = ":white_check_mark:"
+            else:
+                rngbool = ":negative_squared_cross_mark:"
+            await message.channel.send(":game_die: **" + str(finalresult) + "%**: " + rngbool)
 
 client.run(TOKEN)
