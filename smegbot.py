@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 import random
 import pyfiglet
 import requests
-import xml.etree.ElementTree as ET
 import re
+import horny
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -26,7 +26,8 @@ ballcontent = [
     ":8ball: lmao yeah",
     ":8ball: yes",
     ":8ball: no fuck you",
-    ":8ball: no fuck off"
+    ":8ball: no fuck off",
+    ":8ball: lol"
 ]
 
 client = discord.Client()
@@ -70,17 +71,24 @@ async def on_message(message):
 
     if message.content.startswith("gelbooru "):
         text = stripprefix(message.content, "gelbooru ")
-        text = text.replace(" ", "+")
-        GELBOORU_API = os.getenv('GELBOORU_API')
-        text = "https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=100" + GELBOORU_API + "&tags=" + text
-        r = requests.get(text)
-        xml = ET.fromstring(r.content)
-        posts = xml.findall('post')
-        imgurl = []
-        for post in posts:
-            imgurl.append(post.attrib['file_url'])
-        text = randomlistitem(imgurl)
-        await message.channel.send(text)
+        posts = horny.gelbooru(text)
+        print("a")
+        try:
+            imgurl = []
+            for post in posts:
+                imgurl.append(post.attrib['file_url'])
+            text = randomlistitem(imgurl)
+            await message.channel.send(text)
+            print("g")
+        except (ValueError, IndexError):
+            print("e")
+            await message.channel.send("zero results, you clown")
+            await message.channel.send("are you sure you know your tags? :thinking:")
+
+    if message.content.startswith("e621 "):
+        text = stripprefix(message.content, "e621 ")
+        posts = horny.e621(text)
+        await message.channel.send(posts)
 
     if message.content.startswith("roll "):
         text = stripprefix(message.content, "roll ")
