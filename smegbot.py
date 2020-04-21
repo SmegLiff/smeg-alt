@@ -7,6 +7,7 @@ import pyfiglet
 import requests
 import re
 import horny
+from seriouscommand import command
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -44,6 +45,8 @@ def stripprefix(text, prefix): # it looks better ok
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
+    game = discord.Game("smeg help")
+    await client.change_presence(status=discord.Status.online, activity=game)
 
 @client.event
 async def on_message(message):
@@ -55,6 +58,9 @@ async def on_message(message):
         channel = client.get_channel(OUTPUT_CHANNEL_1)  # output channel
         await channel.send(header + message.content)
 
+    if message.content.startswith("smeg "):
+        text = stripprefix(message.content, "smeg ")
+        await message.channel.send(command(text))
 
     if "sex" in message.content:
         await message.channel.send("sex")
