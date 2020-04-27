@@ -35,6 +35,7 @@ these commands do not require a prefix because why not
             return """```
   rps - plays rock paper scissors
   poker - draw poker, 2 players
+  strippoker - owo
             ```"""
 
 
