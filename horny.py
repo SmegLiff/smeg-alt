@@ -23,7 +23,6 @@ def gelbooru(text):
         text = re.sub("\[.*?\]", "", text)
     else:
         amount = 1
-    print(text)
     text = text.replace(" ", "+")
     GELBOORU_API = os.getenv('GELBOORU_API')
     text = "https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=100" + GELBOORU_API + "&tags=" + text

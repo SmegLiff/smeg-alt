@@ -7,13 +7,18 @@ import pyfiglet
 import requests
 import re
 import horny
-from seriouscommand import command
+from infocommand import *
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 TARGET_SERVER_1 = os.getenv('TARGET_SERVER_1')
 OUTPUT_CHANNEL_1 = os.getenv('OUTPUT_CHANNEL_1')
 
+readingReply = False
+lastAuthor = None
+playing = None
+
+rps = ["rock", "paper", "scissors"]
 ballcontent = [
     ":8ball: nope",
     ":8ball: lol no",
@@ -55,8 +60,31 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    global readingReply
+    global lastAuthor
+    global playing
+
     if message.author == client.user:
         return
+
+    if message.author == lastAuthor and readingReply:
+        if playing == 0: # RPS
+            if message.content in rps:
+                pick = randomlistitem(rps)[0]
+                pickindex = rps.index(pick)
+                userpick = rps.index(message.content)
+                if pickindex - userpick == 1 or userpick - pickindex == 2:
+                    await message.channel.send("haha i picked " + pick + " i won you noob")
+                elif userpick - pickindex == 1 or pickindex - userpick == 2:
+                    await message.channel.send("ok i picked " + pick + " you won chronbratgulasions")
+                else:
+                    await message.channel.send("i picked " + pick + " so we tied and that's stupid")
+            else:
+                await message.channel.send("play the game properly you moron")
+        readingReply = False
+        lastAuthor = None
+        playing = None
+
 
     if message.guild.id == int(TARGET_SERVER_1):  # spies on a certain server, if you are in that server congratulations
         header = ("#" + str(message.channel) + " - [" + str(message.author) + "] " + str(message.created_at.utcnow())[0:-7] + " UTC\n")
@@ -65,7 +93,15 @@ async def on_message(message):
 
     if message.content.startswith("smeg "):
         text = stripprefix(message.content, "smeg ")
-        await message.channel.send(command(text))
+        if text.startswith("play "): # gamer mode
+            text = stripprefix(text, "play ")
+            if text.startswith("rps"):
+                readingReply = True
+                lastAuthor = message.author
+                playing = 0
+                await message.channel.send("ok say `rock` `paper` or `scissors`")
+        else:
+            await message.channel.send(infocommand(text, message.author))
 
     if "sex" in message.content:
         await message.channel.send("sex")
@@ -91,7 +127,6 @@ async def on_message(message):
     if message.content.startswith("gelbooru"):
         text = stripprefix(message.content, "gelbooru")
         apiresult = horny.gelbooru(text)
-        print(apiresult)
         try:
             imgurl = []
             for post in apiresult.get("posts"):
