@@ -73,35 +73,44 @@ def getValue(hand):
     elif isStraight():
         value = "Straight"
     else:
-        rankset = set(rank)
+        rankset = set()
+        for char in rank:
+            char = char.replace("J", "11")
+            char = char.replace("Q", "12")
+            char = char.replace("K", "13")
+            char = char.replace("A", "14")
+            num = int(char)
+            rankset.add(num)
         ranknodupe = list(rankset) # big brain moment
         ranknodupe = ranknodupe[::1] # i don't know anymore
+        print(ranknodupe)
         if len(ranknodupe) == 2: # four of a kind or FH
             for ele in ranknodupe:
-                if rank.count(ele) == 4:
+                if rank.count(str(ele)) == 4:
                     value = "Four of a kind"
-                    prioindices.append(ranks.index(ele))
-                elif rank.count(ele) == 3:
+                    prioindices.append(ranks.index(str(ele)))
+                elif rank.count(str(ele)) == 3:
                     value = "Full House"
-                    prioindices.append(ranks.index(ele))
+                    prioindices.append(ranks.index(str(ele)))
 
         elif len(ranknodupe) == 3: # two pairs, three of a kind
             for ele in ranknodupe:
-                if rank.count(ele) == 3: # 3
+                if rank.count(str(ele)) == 3: # 3
                     value = "Three of a kind"
-                    prioindices.append(ranks.index(ele))
-                elif rank.count(ele) == 2:
+                    prioindices.append(ranks.index(str(ele)))
+                elif rank.count(str(ele)) == 2:
                     value = "Two pairs"
-                    prioindices.append(ranks.index(ele))
+                    prioindices.append(ranks.index(str(ele)))
         elif len(ranknodupe) == 4: # one pair
             for ele in ranknodupe:
-                if rank.count(ele) == 2:
+                if rank.count(str(ele)) == 2:
                     value = "One pair"
-                    prioindices.append(ranks.index(ele))
+                    prioindices.append(ranks.index(str(ele)))
         else:
             value = "High card"
         prioindices.append(rankset - set(prioindices))
 
+    print(value)
     valueindex = values.index(value)
     return (valueindex, prioindices, value)
 
@@ -127,18 +136,27 @@ def draw(player, amount=1):
 def discard(player, cards):
     global p1Value, p1Discarded
     global p2Value, p2Discarded
-    for i in cards:
-        i = int(i)
-        i = i - 1 # because arrays start at zero
+    global p1, p2
+    if player == "p1":
+        hand = p1
+        p1Discarded = True
+    elif player == "p2":
+        hand = p2
+        p2Discarded = True
+    temphand = hand[:]
+    if cards != "0":
+        for i in cards:
+            i = int(i)
+            i = i - 1 # because arrays start at zero
+            temphand[i] = ""
+            draw(temphand)
+        newhand = [card for card in temphand if len(card) != 0]
         if player == "p1":
-            hand = p1
-            p1Discarded = True
+            p1 = newhand
         elif player == "p2":
-            hand = p2
-            p2Discarded = True
-        if i != -1:
-            del hand[i]
-        draw(hand)
+            p2 = newhand
+
+
     if p1Discarded and p2Discarded:
         p1Value = getValue(p1)
         p2Value = getValue(p2)

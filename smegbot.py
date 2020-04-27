@@ -71,36 +71,35 @@ async def on_message(message):
 
     if message.guild == None: # DM
         if playing == 1 and Player2 != None:
-                while True:
-                    try:
-                        int(message.content)
-                        if message.author == Player1:
-                            ready = poker.discard("p1", message.content)
-                        elif message.author == Player2:
-                            ready = poker.discard("p2", message.content)
-                        break
-                    except ValueError:
-                        await client.get_user(message.author.id).send("play the game properly you moron")
+            try:
+                int(message.content)
+            except ValueError:
+                await client.get_user(message.author.id).send("play the game properly you moron, you picked `0` then")
+            finally:
+                if message.author == Player1:
+                    ready = poker.discard("p1", message.content)
+                elif message.author == Player2:
+                    ready = poker.discard("p2", message.content)
 
-                if ready != "no": #lol
-                    channel, p1Hand, p2Hand, winner, winnerValue = ready
-                    p1Hand = ", ".join(p1Hand)
-                    p2Hand = ", ".join(p2Hand)
-                    p1 = str(Player1)[:-5]
-                    p2 = str(Player2)[:-5]
-                    if winner == 1:
-                        wintext = p1 + "** wins with **" + winnerValue[2]
-                    elif winner == 2:
-                        wintext = p2 + "** wins with **" + winnerValue[2]
-                    else:
-                        wintext = "**it's a tie!**"
+            if ready != "no": #lol
+                channel, p1Hand, p2Hand, winner, winnerValue = ready
+                p1Hand = ", ".join(p1Hand)
+                p2Hand = ", ".join(p2Hand)
+                p1 = str(Player1)[:-5]
+                p2 = str(Player2)[:-5]
+                if winner == 1:
+                    wintext = p1 + "** wins with **" + winnerValue[2]
+                elif winner == 2:
+                    wintext = p2 + "** wins with **" + winnerValue[2]
+                else:
+                    wintext = "it's a tie"
 
-                    text = p1 + "'s hand: " + p1Hand + "\n" + p2 + "'s hand: " + p2Hand + "\n**" + wintext + "!**"
-                    await channel.send(text)
-                    readingReply = False
-                    Player1 = None
-                    Player2 = None
-                    playing = None
+                text = p1 + "'s hand: " + p1Hand + "\n" + p2 + "'s hand: " + p2Hand + "\n**" + wintext + "!**"
+                await channel.send(text)
+                readingReply = False
+                Player1 = None
+                Player2 = None
+                playing = None
 
     else: # Server
         if (message.author == Player1 or message.author == Player2) and readingReply:
@@ -166,7 +165,9 @@ async def on_message(message):
                 else:
                     await message.channel.send("wtf are you trying to join")
             else:
-                await message.channel.send(infocommand(text, message.author))
+                text = infocommand(text, message.author)
+                if text != "":
+                    await message.channel.send(infocommand(text, message.author))
 
         if "sex" in message.content:
             await message.channel.send("sex")
