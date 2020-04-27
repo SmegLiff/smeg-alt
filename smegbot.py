@@ -35,8 +35,12 @@ ballcontent = [
 
 client = discord.Client()
 
-def randomlistitem(listname):
-    return listname[random.randint(0, len(listname) - 1 )]
+def randomlistitem(listname, amount=1):
+    list = listname[:] # copies the input list to pop
+    output = []
+    for i in range(0,amount):
+        output.append(list.pop(random.randint(0, len(list) - 1)))
+    return output
 
 def stripprefix(text, prefix): # it looks better ok
     return text.split(prefix, 1)[1]
@@ -67,7 +71,7 @@ async def on_message(message):
         await message.channel.send("sex")
 
     if message.content.startswith("8ball"):
-        text = randomlistitem(ballcontent)
+        text = randomlistitem(ballcontent)[0]
         await message.channel.send(text)
 
     if "big" in message.content:
@@ -84,21 +88,22 @@ async def on_message(message):
             await message.channel.send("wow ok nice reverse image search loser")
             await message.channel.send("ok now check the iv or ban")
 
-    if message.content.startswith("gelbooru "):
-        text = stripprefix(message.content, "gelbooru ")
-        posts = horny.gelbooru(text)
-        print("a")
+    if message.content.startswith("gelbooru"):
+        text = stripprefix(message.content, "gelbooru")
+        apiresult = horny.gelbooru(text)
+        print(apiresult)
         try:
             imgurl = []
-            for post in posts:
+            for post in apiresult.get("posts"):
                 imgurl.append(post.attrib['file_url'])
-            text = randomlistitem(imgurl)
-            await message.channel.send(text)
-            print("g")
+            text = randomlistitem(imgurl, apiresult.get("amount"))
+            text = "\n".join(text)
+            if len(text) > 2000:
+                await message.channel.send("that's too much, coomer")
+            else:
+                await message.channel.send(text)
         except (ValueError, IndexError):
-            print("e")
-            await message.channel.send("zero results, you clown")
-            await message.channel.send("are you sure you know your tags? :thinking:")
+            await message.channel.send("ok either you don't know how to search properly or your little kink is too stupid to be found")
 
     if message.content.startswith("e621 "):
         text = stripprefix(message.content, "e621 ")

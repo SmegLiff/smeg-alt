@@ -6,13 +6,13 @@ def command(text):
             return """
             ```
 these commands do not require a prefix because why not
-  8ball [text] - haha funny ball
-  roll 4d6 + 2d3 - dice roll
-  roll 1% * 1000% - teaches you how gacha is bullshit
-  gelbooru [tag] [tag] - yes.
-  e621 [tag] [tag] - somehow isn't working, why does e621 require complicated setups anyway?
+  8ball `text` - haha funny ball
+  roll `4d6 + 2d3` - dice roll
+  roll `1% * 1000%` - teaches you how gacha is bullshit
+  gelbooru[`amount of posts`] `tag` `tag` - yes.
+  e621 `tag` `tag` - somehow isn't working, why does e621 require complicated setups anyway?
   sex - sex.
-  big [text] - makes things big
+  big `text` - makes things big
 
 "serious" commands below require the prefix
   help - this
