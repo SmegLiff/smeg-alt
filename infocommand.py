@@ -33,7 +33,8 @@ these commands do not require a prefix because why not
         text = text.replace("help ", "")
         if text == "play":
             return """```
-  rps - plays rock paper scissors            
+  rps - plays rock paper scissors
+  poker - draw poker, 2 players
             ```"""
 
 
