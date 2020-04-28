@@ -137,7 +137,8 @@ async def on_message(message):
                     Player2 = None
                     playing = None
 
-        if message.guild.id == int(TARGET_SERVER_1):  # spies on a certain server, if you are in that server congratulations
+        if message.guild.id == int(TARGET_SERVER_1):    # spies on a certain server, and copies messages into another server
+                                                        # it's a test feature, i don't actually do anything with the chat log yet
             header = ("#" + str(message.channel) + " - [" + str(message.author) + "] " + str(message.created_at.utcnow())[0:-7] + " UTC\n")
             channel = client.get_channel(int(OUTPUT_CHANNEL_1))  # output channel
             await channel.send(header + message.content)
@@ -182,7 +183,7 @@ async def on_message(message):
                 try:
                     text = infocommand(text, message.author)
                     if text != "":
-                        await message.channel.send(infocommand(text, message.author))
+                        await message.channel.send(text)
                 except AttributeError:
                     return
 

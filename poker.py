@@ -33,6 +33,7 @@ def reset():
 
 def getValue(hand):
     global ranks, suits
+    global prioindices
     rank = []
     suit = []
     value = ""

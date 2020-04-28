@@ -23,6 +23,7 @@ these commands do not require a prefix because why not
   captoggle - makes auto capitalization no longer cause your commands to fail to trigger
   play - epic gaming moment, do smeg help play for more info
   cancel - cancel some prompts, like games (probably broken somehow)
+  repo/github - may not work if i randomly decide to make the repo private
 ```"""   # well that is ugly
         else:
             if random.randint(0,1):
@@ -37,13 +38,18 @@ these commands do not require a prefix because why not
             return """```
   rps - plays rock paper scissors
   poker - draw poker, 2 players
-  strip poker - owo
-            ```"""
+  strip poker - owo```"""
 
 
 
-    if text.startswith("captoggle"):
+    elif text == "captoggle":
         return """
 https://www.google.com/search?q=android+disabling+auto+capitalization\n
 https://www.google.com/search?q=ios+disabling+auto+capitalization
         """  # gottem
+
+    elif text == "repo" or text == "github":
+        return "https://github.com/SmegLiff/smeg-alt"
+
+    else:
+        return ""
