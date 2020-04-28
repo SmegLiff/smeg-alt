@@ -149,6 +149,7 @@ def discard(player, cards):
         p2Discarded = True
     temphand = hand[:]
     if cards != "0":
+        setcard = list(set([int(card) for card in cards])) # removes duplicates
         for i in cards:
             i = int(i)
             i = i - 1 # because arrays start at zero

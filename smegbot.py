@@ -52,6 +52,8 @@ def randomlistitem(listname, amount=1):
 def stripprefix(text, prefix): # it looks better ok
     return text.split(prefix, 1)[1]
 
+class StupidInput(Exception):
+    pass
 
 @client.event
 async def on_ready():
@@ -71,15 +73,20 @@ async def on_message(message):
 
     if message.guild == None: # DM
         if playing == 1 and Player2 != None:
-            try:
-                int(message.content)
-            except ValueError:
+            if len(message.content) > 1 and "0" in message.content:
                 await client.get_user(message.author.id).send("play the game properly you moron, you picked `0` then")
-            finally:
-                if message.author == Player1:
-                    ready = poker.discard("p1", message.content)
-                elif message.author == Player2:
-                    ready = poker.discard("p2", message.content)
+                cardinput = "0"
+            else:
+                try:
+                    int(message.content)
+                    cardinput = message.content
+                except ValueError:
+                    await client.get_user(message.author.id).send("play the game properly you moron, you picked `0` then")
+                    cardinput = "0"
+            if message.author == Player1:
+                ready = poker.discard("p1", cardinput)
+            elif message.author == Player2:
+                ready = poker.discard("p2", cardinput)
 
             if ready != "no": #lol
                 channel, p1Hand, p2Hand, winner, winnerValue = ready
@@ -119,6 +126,10 @@ async def on_message(message):
                         await message.channel.send("ok i picked " + pick + " you won chronbratgulasions")
                     else:
                         await message.channel.send("i picked " + pick + " so we tied and that's stupid")
+                    readingReply = False
+                    Player1 = None
+                    Player2 = None
+                    playing = None
                 else:
                     await message.channel.send("play the game properly you moron")
                     readingReply = False
@@ -147,7 +158,7 @@ async def on_message(message):
                     Player1 = message.author
                     playing = 1
                     await message.channel.send("waiting for player 2...\nplayer 2 type `smeg join` to join")
-                elif text.startswith("stripppoker"):
+                elif text.startswith("strip poker"):
                     await message.channel.send("https://spnati.net/")
 
             elif text == "join":
