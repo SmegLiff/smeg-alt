@@ -146,7 +146,7 @@ async def on_message(message):
                     readingReply = True
                     Player1 = message.author
                     playing = 1
-                    await message.channel.send("waiting for player 2...\nplayer 2 type smeg join to join")
+                    await message.channel.send("waiting for player 2...\nplayer 2 type `smeg join` to join")
                 elif text.startswith("stripppoker"):
                     await message.channel.send("https://spnati.net/")
 
@@ -262,6 +262,6 @@ async def on_message(message):
             readingReply = True
             Player1 = message.author
             playing = 1
-            await message.channel.send("waiting for player 2...\nplayer 2 type smeg join to join")
+            await message.channel.send("waiting for player 2...\nplayer 2 type `smeg join` to join")
 
 client.run(TOKEN)

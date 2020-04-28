@@ -47,15 +47,17 @@ def getValue(hand):
 
     def isStraight():
         global prioindices
-        last = indices[:].pop(0)
+        sublist = indices[:]
+        last = sublist.pop(0)
         prioindices.append(last)
-        for i in indices:
+        for i in sublist:
             if i - last == 1:
                 last = i
                 prioindices.append(last)
             else:
                 prioindices = []
                 return False
+        prioindices = prioindices[::-1]
         return True
 
     def isFlush():
