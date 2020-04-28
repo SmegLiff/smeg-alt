@@ -12,6 +12,7 @@ p2 = []
 p2Discarded = False
 p2Value = (None, None)
 gamechannel = ""
+prioindices = []
 
 def reset():
     global deck
@@ -37,7 +38,6 @@ def getValue(hand):
     value = ""
     highest = ""
     indices = []
-    prioindices = []
     for card in hand:
         rank.append(card[:-1])
         suit.append(card[-1:])
@@ -46,22 +46,36 @@ def getValue(hand):
     indices.sort()
 
     def isStraight():
+        global prioindices
         last = indices[:].pop(0)
+        prioindices.append(last)
         for i in indices:
             if i - last == 1:
                 last = i
+                prioindices.append(last)
             else:
+                prioindices = []
                 return False
         return True
 
     def isFlush():
+        global prioindices
         first = suit[0]
         for card in suit:
             if card != first:
                 return False
+        prioindices = indices[::-1]
         return True
 
-
+    rankset = set()
+    for char in rank:
+        char = char.replace("J", "11")
+        char = char.replace("Q", "12")
+        char = char.replace("K", "13")
+        char = char.replace("A", "14")
+        num = int(char)
+        rankset.add(num - 2)
+    ranknodupe = sorted(rankset)[::-1]  # big brain moment
     if isStraight() and isFlush():
         ranksort = rank[:].sort()
         if ["10", "A", "J", "Q", "K"] == ranksort:
@@ -73,44 +87,32 @@ def getValue(hand):
     elif isStraight():
         value = "Straight"
     else:
-        rankset = set()
-        for char in rank:
-            char = char.replace("J", "11")
-            char = char.replace("Q", "12")
-            char = char.replace("K", "13")
-            char = char.replace("A", "14")
-            num = int(char)
-            rankset.add(num)
-        ranknodupe = list(rankset) # big brain moment
-        ranknodupe = ranknodupe[::1] # i don't know anymore
-        print(ranknodupe)
         if len(ranknodupe) == 2: # four of a kind or FH
             for ele in ranknodupe:
-                if rank.count(str(ele)) == 4:
+                if rank.count(ranks[ele]) == 4:
                     value = "Four of a kind"
-                    prioindices.append(ranks.index(str(ele)))
-                elif rank.count(str(ele)) == 3:
+                    prioindices.append(ele)
+                elif rank.count(ranks[ele]) == 3:
                     value = "Full House"
-                    prioindices.append(ranks.index(str(ele)))
+                    prioindices.append(ele)
 
         elif len(ranknodupe) == 3: # two pairs, three of a kind
             for ele in ranknodupe:
-                if rank.count(str(ele)) == 3: # 3
+                if rank.count(ranks[ele]) == 3: # 3
                     value = "Three of a kind"
-                    prioindices.append(ranks.index(str(ele)))
-                elif rank.count(str(ele)) == 2:
+                    prioindices.append(ele)
+                elif rank.count(ranks[ele]) == 2:
                     value = "Two pairs"
-                    prioindices.append(ranks.index(str(ele)))
+                    prioindices.append(ele)
         elif len(ranknodupe) == 4: # one pair
             for ele in ranknodupe:
-                if rank.count(str(ele)) == 2:
+                if rank.count(ranks[ele]) == 2:
                     value = "One pair"
-                    prioindices.append(ranks.index(str(ele)))
+                    prioindices.append(ele)
         else:
             value = "High card"
-        prioindices.append(rankset - set(prioindices))
+        prioindices.append(sorted(rankset - set(prioindices)))
 
-    print(value)
     valueindex = values.index(value)
     return (valueindex, prioindices, value)
 

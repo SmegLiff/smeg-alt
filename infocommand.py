@@ -16,11 +16,13 @@ these commands do not require a prefix because why not
   e621 tag tag - somehow isn't working, why does e621 require complicated setups anyway?
   sex - sex.
   big text - makes things big
+  poger - alias of smeg play poker
 
 "serious" commands below require the prefix
   help - this
   captoggle - makes auto capitalization no longer cause your commands to fail to trigger
   play - epic gaming moment, do smeg help play for more info
+  cancel - cancel some prompts, like games (probably broken somehow)
 ```"""   # well that is ugly
         else:
             if random.randint(0,1):

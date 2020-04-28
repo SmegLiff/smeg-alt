@@ -103,6 +103,11 @@ async def on_message(message):
 
     else: # Server
         if (message.author == Player1 or message.author == Player2) and readingReply:
+            if message.content == "smeg cancel":
+                readingReply = False
+                Player1 = None
+                Player2 = None
+                playing = None
             if playing == 0: # RPS
                 if message.content in rps:
                     pick = randomlistitem(rps)[0]
@@ -116,12 +121,10 @@ async def on_message(message):
                         await message.channel.send("i picked " + pick + " so we tied and that's stupid")
                 else:
                     await message.channel.send("play the game properly you moron")
-
-            readingReply = False
-            Player1 = None
-            Player2 = None
-            playing = None
-
+                    readingReply = False
+                    Player1 = None
+                    Player2 = None
+                    playing = None
 
         if message.guild.id == int(TARGET_SERVER_1):  # spies on a certain server, if you are in that server congratulations
             header = ("#" + str(message.channel) + " - [" + str(message.author) + "] " + str(message.created_at.utcnow())[0:-7] + " UTC\n")
@@ -165,9 +168,13 @@ async def on_message(message):
                 else:
                     await message.channel.send("wtf are you trying to join")
             else:
-                text = infocommand(text, message.author)
-                if text != "":
-                    await message.channel.send(infocommand(text, message.author))
+                try:
+                    text = infocommand(text, message.author)
+                    if text != "":
+                        await message.channel.send(infocommand(text, message.author))
+                except AttributeError:
+                    return
+
 
         if "sex" in message.content:
             await message.channel.send("sex")
@@ -250,5 +257,11 @@ async def on_message(message):
                 else:
                     rngbool = ":negative_squared_cross_mark:"
                 await message.channel.send(":game_die: **" + str(finalresult) + "%**: " + rngbool)
+
+        if message.content == "poger":
+            readingReply = True
+            Player1 = message.author
+            playing = 1
+            await message.channel.send("waiting for player 2...\nplayer 2 type smeg join to join")
 
 client.run(TOKEN)
