@@ -113,7 +113,7 @@ def getValue(hand):
                     prioindices.append(ele)
         else:
             value = "High card"
-        prioindices.append(sorted(rankset - set(prioindices)))
+        prioindices = prioindices + (sorted(rankset - set(prioindices)))[::-1]
 
     valueindex = values.index(value)
     return (valueindex, prioindices, value)
