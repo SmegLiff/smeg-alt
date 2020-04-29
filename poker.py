@@ -151,7 +151,7 @@ def discard(player, cards):
     temphand = hand[:]
     if cards != "0":
         setcard = list(set([int(card) for card in cards])) # removes duplicates
-        for i in cards:
+        for i in setcard:
             i = int(i)
             i = i - 1 # because arrays start at zero
             temphand[i] = ""
