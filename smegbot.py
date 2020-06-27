@@ -210,25 +210,31 @@ async def on_message(message):
                 await message.channel.send("ok now check the iv or ban")
 
         if message.content.startswith("gelbooru"):
-            text = stripprefix(message.content, "gelbooru")
-            apiresult = horny.gelbooru(text)
-            try:
-                imgurl = []
-                for post in apiresult.get("posts"):
-                    imgurl.append(post.attrib['file_url'])
-                text = randomlistitem(imgurl, apiresult.get("amount"))
-                text = "\n".join(text)
-                if len(text) > 2000:
-                    await message.channel.send("that's too much, coomer")
-                else:
-                    await message.channel.send(text)
-            except (ValueError, IndexError):
-                await message.channel.send("ok either you don't know how to search properly or your little kink is too stupid to be found")
+            if message.channel.is_nsfw():
+                text = stripprefix(message.content, "gelbooru")
+                apiresult = horny.gelbooru(text)
+                try:
+                    imgurl = []
+                    for post in apiresult.get("posts"):
+                        imgurl.append(post.attrib['file_url'])
+                    text = randomlistitem(imgurl, apiresult.get("amount"))
+                    text = "\n".join(text)
+                    if len(text) > 2000:
+                        await message.channel.send("that's too much, coomer")
+                    else:
+                        await message.channel.send(text)
+                except (ValueError, IndexError):
+                    await message.channel.send("ok either you don't know how to search properly or your little kink is too stupid to be found")
+            else:
+                await message.channel.send("horny")
 
         if message.content.startswith("e621 "):
-            text = stripprefix(message.content, "e621 ")
-            posts = horny.e621(text)
-            await message.channel.send(posts)
+            if message.channel.is_nsfw():
+                text = stripprefix(message.content, "e621 ")
+                posts = horny.e621(text)
+                await message.channel.send(posts)
+            else:
+                await message.channel.send("horny")
 
         if message.content.startswith("roll "):
             text = stripprefix(message.content, "roll ")
