@@ -265,8 +265,7 @@ async def on_message(message):
                     else:
                         await message.channel.send(text)
                 except (ValueError, IndexError):
-                    await message.channel.send(
-                        "ok either you don't know how to search properly or your little kink is too stupid to be found")
+                    await message.channel.send("ok either you don't know how to search properly or your little kink is too stupid to be found")
             else:
                 await message.channel.send("horny")
 
@@ -278,6 +277,7 @@ async def on_message(message):
                 await message.channel.send(posts)
             else:
                 await message.channel.send("horny")
+
 
         if message.content.lower().startswith("roll "):
             text = strip_prefix(message.content, "roll ")
