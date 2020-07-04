@@ -112,7 +112,6 @@ async def on_message(message):
                 playing = None
 
     else: # Server
-        print(message.author.id)
         if str(message.author.id) == OWNER_ID:  # overrides
             if message.content == "smeg leave server":
                 await message.channel.send("ok retard")

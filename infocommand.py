@@ -28,7 +28,7 @@ these commands do not require a prefix because why not
             if random.randint(0,1):
                 return "no"
             else:
-                output = "shut up " + author[:-5]
+                output = "shut up " + author[:-5].lower()
                 return output
 
     elif text.startswith("help "):
