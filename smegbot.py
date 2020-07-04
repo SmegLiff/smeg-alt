@@ -12,6 +12,7 @@ import poker
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+OWNER_ID = os.getenv('OWNER_ID')
 TARGET_SERVER_1 = os.getenv('TARGET_SERVER_1')
 OUTPUT_CHANNEL_1 = os.getenv('OUTPUT_CHANNEL_1')
 
@@ -281,5 +282,10 @@ async def on_message(message):
             Player1 = message.author
             playing = 1
             await message.channel.send("waiting for player 2...\nplayer 2 type `smeg join` to join")
+            
+        if message.content == "smeg leave server":
+            serverid = client.get_server("id")
+            await message.channel.send("ok retard")
+            await client.leave_server(toleave)
 
 client.run(TOKEN)
