@@ -13,7 +13,6 @@ these commands do not require a prefix because why not
   roll 4d6 + 2d3 - dice roll
   roll 1% * 1000% - teaches you how gacha is bullshit
   gelbooru[amount of posts] tag tag - yes.
-  e621 tag tag - somehow isn't working, why does e621 require complicated setups anyway?
   sex - sex.
   big text - makes things big
   poger - alias of smeg play poker

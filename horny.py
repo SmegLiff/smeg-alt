@@ -30,9 +30,3 @@ def gelbooru(text):
     xml = ET.fromstring(r.content)
     returnvalue = {"posts": xml.findall("post"), "amount": amount}
     return returnvalue
-
-def e621(text):
-    # text = text.replace(" ", "+")
-    text = "https://e621.net/post/index.json"      # nothing works lol unepic
-    r = requests.get(text, headers=headers)
-    return "this should be working but it is not, " + str(r.status_code)

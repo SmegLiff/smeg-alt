@@ -9,11 +9,13 @@ import re
 import horny
 from infocommand import *
 import poker
+from google import imagesearch
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 TARGET_SERVER_1 = os.getenv('TARGET_SERVER_1')
 OUTPUT_CHANNEL_1 = os.getenv('OUTPUT_CHANNEL_1')
+OWNER_ID = os.getenv('OWNER_ID')
 
 readingReply = False
 Player1 = None
@@ -39,6 +41,7 @@ ballcontent = [
     ":8ball: no fuck off",
     ":8ball: lol"
 ]
+spam_disabled = []
 
 client = discord.Client()
 
@@ -109,6 +112,30 @@ async def on_message(message):
                 playing = None
 
     else: # Server
+        print(message.author.id)
+        if str(message.author.id) == OWNER_ID:  # overrides
+            if message.content == "smeg leave server":
+                await message.channel.send("ok retard")
+                await message.guild.leave()
+            elif message.content == "smeg stop spamming":
+                if message.guild.id not in spam_disabled:
+                    spam_disabled.append(message.guild.id)
+                else:
+                    spam_disabled.remove(message.guild.id)
+
+        ############     SPAM     ###########
+        if message.guild.id not in spam_disabled:
+            if "sex" in message.content:
+                await message.channel.send("sex")
+
+            if "big" in message.content:
+                text = stripprefix(message.content, "big")
+                if text[0] == " ":
+                    text = stripprefix(text, " ")
+                bigtext = pyfiglet.figlet_format(text)
+                await message.channel.send("```\n" + bigtext + "\n```")
+        #####################################
+
         if (message.author == Player1 or message.author == Player2) and readingReply:
             if message.content == "smeg cancel":
                 readingReply = False
@@ -187,48 +214,33 @@ async def on_message(message):
                 except AttributeError:
                     return
 
-
-        if "sex" in message.content:
-            await message.channel.send("sex")
-
         if message.content.startswith("8ball"):
             text = randomlistitem(ballcontent)[0]
             await message.channel.send(text)
 
-        if "big" in message.content:
-            text = stripprefix(message.content, "big")
-            if text[0] == " ":
-                text = stripprefix(text, " ")
-            bigtext = pyfiglet.figlet_format(text)
-            await message.channel.send("```\n" + bigtext + "\n```")
-
-        if message.author.id == 365975655608745985: # Pokecord
-            if message.content == "This is the wrong pokémon!":
-                await message.channel.send("haha what a fucking retard")
-            elif message.content.startswith("Congratulations"):
-                await message.channel.send("wow ok nice reverse image search loser")
-                await message.channel.send("ok now check the iv or ban")
+        if message.content.startswith("google"):
+            text = stripprefix(message.content, "google")
+            await message.channel.send(google.imagesearch(text))
 
         if message.content.startswith("gelbooru"):
-            text = stripprefix(message.content, "gelbooru")
-            apiresult = horny.gelbooru(text)
-            try:
-                imgurl = []
-                for post in apiresult.get("posts"):
-                    imgurl.append(post.attrib['file_url'])
-                text = randomlistitem(imgurl, apiresult.get("amount"))
-                text = "\n".join(text)
-                if len(text) > 2000:
-                    await message.channel.send("that's too much, coomer")
-                else:
-                    await message.channel.send(text)
-            except (ValueError, IndexError):
-                await message.channel.send("ok either you don't know how to search properly or your little kink is too stupid to be found")
-
-        if message.content.startswith("e621 "):
-            text = stripprefix(message.content, "e621 ")
-            posts = horny.e621(text)
-            await message.channel.send(posts)
+            if message.channel.is_nsfw():
+                text = stripprefix(message.content, "gelbooru")
+                apiresult = horny.gelbooru(text)
+                try:
+                    imgurl = []
+                    for post in apiresult.get("posts"):
+                        imgurl.append(post.attrib['file_url'])
+                    text = randomlistitem(imgurl, apiresult.get("amount"))
+                    text = "\n".join(text)
+                    if len(text) > 2000:
+                        await message.channel.send("that's too much, coomer")
+                    else:
+                        await message.channel.send(text)
+                except (ValueError, IndexError):
+                    await message.channel.send(
+                        "ok either you don't know how to search properly or your little kink is too stupid to be found")
+            else:
+                await message.channel.send("horny")
 
         if message.content.startswith("roll "):
             text = stripprefix(message.content, "roll ")
